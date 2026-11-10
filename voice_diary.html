@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>하루의 기록 | 음성 일기</title>
+<style>
+:root{font-family:Pretendard,'Noto Sans KR',system-ui,sans-serif;color:#243046;background:#f4f6fa}*{box-sizing:border-box}body{margin:0}.shell{max-width:900px;margin:48px auto;padding:0 20px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}h1{margin:4px 0;font-size:30px;letter-spacing:-1px}header p{color:#667085;margin:7px 0}.tag{color:#5672ac;background:#e7edfc;border-radius:30px;padding:8px 12px;font-size:12px;font-weight:700}.panel{background:white;border:1px solid #e6eaf1;border-radius:20px;padding:28px;box-shadow:0 8px 25px #1d35570c}.row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.label{font-size:13px;color:#667085;font-weight:700}input,textarea{width:100%;font:inherit;border:1px solid #dce2ec;border-radius:12px;padding:14px;background:#fff;color:#202d43}input:focus,textarea:focus{outline:2px solid #a7bce9;border-color:#7696d3}#diaryDate{max-width:205px}textarea{margin-top:12px;min-height:220px;resize:vertical;line-height:1.8}button{cursor:pointer;font:inherit;border:0;border-radius:12px;padding:12px 18px;font-weight:700}button:disabled{cursor:not-allowed;opacity:.55}.primary{background:#385caa;color:white}.record{background:#ecf2ff;color:#3158a3}.record.active{background:#fce7e7;color:#b92e3a}.light{background:#f2f4f8;color:#516079}.danger{background:#fff0f0;color:#b4232b}.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.status{font-size:13px;color:#69778f;margin-top:12px;min-height:21px}h2{font-size:20px;margin:36px 0 15px}.entries{display:grid;gap:12px}.entry{background:white;border:1px solid #e4e8f0;padding:20px;border-radius:16px}.entryhead{display:flex;justify-content:space-between;gap:12px}.entrytime{font-size:13px;color:#718096}.entry p{white-space:pre-wrap;line-height:1.7;overflow-wrap:anywhere;margin:12px 0}.empty{padding:35px;text-align:center;color:#7c879a;background:#fff;border:1px dashed #d6dce7;border-radius:16px}.small{font-size:12px;color:#8a95a5;margin-top:18px;line-height:1.7}@media(max-width:600px){.shell{margin:20px auto}.panel{padding:20px}h1{font-size:26px}.tag{display:none}}
+</style>
+</head>
+<body><main class="shell">
+<header><div><div class="label">MY PRIVATE JOURNAL</div><h1>하루의 기록 ✦</h1><p>오늘의 이야기를 말로 남겨보세요.</p></div><span class="tag">음성 일기 · 테스트 버전</span></header>
+<section class="panel" aria-label="일기 작성"><div class="row"><label for="diaryDate" class="label">일기 날짜</label><input id="diaryDate" type="date"></div>
+<textarea id="diaryText" placeholder="마이크를 누르고 오늘 있었던 일을 이야기해 보세요. 직접 입력해도 좋아요."></textarea>
+<div class="controls"><button id="recordBtn" class="record" type="button">🎙️ 말하기 시작</button><button id="saveBtn" class="primary" type="button">일기 저장</button><button id="clearBtn" class="light" type="button">내용 비우기</button></div>
+<div id="status" class="status" role="status" aria-live="polite">준비됐어요. 마이크 버튼을 누르면 음성을 글자로 바꿉니다.</div></section>
+<h2>저장한 일기 <span id="count">0</span></h2><section id="entries" class="entries" aria-label="저장된 일기"></section>
+<p class="small">※ 일기 글은 현재 브라우저의 로컬 저장소에만 저장됩니다. 다른 기기와 동기화되지 않으며 브라우저 데이터를 삭제하면 사라질 수 있습니다. 녹음 파일은 저장하지 않습니다. 음성 인식 처리는 브라우저 제공 기능을 이용하므로 음성이 서비스 제공업체로 전송될 수 있습니다.</p>
+</main><script>
+(()=>{
+'use strict';
+const KEY='voice-diary-test-v1';
+const dateEl=document.getElementById('diaryDate'),textEl=document.getElementById('diaryText'),recordBtn=document.getElementById('recordBtn'),statusEl=document.getElementById('status'),entriesEl=document.getElementById('entries'),countEl=document.getElementById('count');
+const localDate=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};dateEl.value=localDate();
+const load=()=>{try{let arr=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(arr)?arr:[]}catch{return []}};
+const setStatus=t=>statusEl.textContent=t;let recognition=null,recording=false,baseText='',finalTranscript='',stopRequested=false;
+function render(){const list=load().sort((a,b)=>b.createdAt.localeCompare(a.createdAt));countEl.textContent=list.length;entriesEl.replaceChildren();if(!list.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='아직 저장된 일기가 없어요. 첫 기록을 남겨보세요.';entriesEl.append(empty);return}for(const item of list){const article=document.createElement('article');article.className='entry';const head=document.createElement('div');head.className='entryhead';const meta=document.createElement('div');const strong=document.createElement('strong');strong.textContent=item.date;const time=document.createElement('div');time.className='entrytime';time.textContent=new Date(item.createdAt).toLocaleString('ko-KR');meta.append(strong,time);const del=document.createElement('button');del.className='danger';del.textContent='삭제';del.type='button';del.addEventListener('click',()=>{if(confirm('이 일기를 삭제할까요?')){localStorage.setItem(KEY,JSON.stringify(load().filter(x=>x.id!==item.id)));render()}});head.append(meta,del);const p=document.createElement('p');p.textContent=item.text;article.append(head,p);entriesEl.append(article)}}
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SpeechRecognition){recordBtn.disabled=true;setStatus('이 브라우저는 음성 인식을 지원하지 않습니다. 최신 Chrome에서 열거나 직접 입력하세요.')}else{
+recognition=new SpeechRecognition();recognition.lang='ko-KR';recognition.continuous=true;recognition.interimResults=true;
+recognition.onstart=()=>{recording=true;recordBtn.classList.add('active');recordBtn.textContent='⏹️ 말하기 종료';setStatus('듣고 있어요… 편하게 말씀하세요.')};
+recognition.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const s=e.results[i][0].transcript;if(e.results[i].isFinal)finalTranscript+=s.trim()+' ';else interim+=s}textEl.value=[baseText,finalTranscript.trim(),interim.trim()].filter(Boolean).join(baseText?'\n':' ')};
+recognition.onerror=e=>{const msg={ 'not-allowed':'마이크 권한이 차단되었습니다. 브라우저 주소창에서 권한을 허용하세요.','no-speech':'목소리가 감지되지 않았어요. 다시 눌러주세요.','audio-capture':'마이크를 찾을 수 없습니다.','network':'음성 인식 네트워크 오류가 발생했습니다.'};setStatus(msg[e.error]||`음성 인식 오류: ${e.error}`)};
+recognition.onend=()=>{recording=false;recordBtn.classList.remove('active');recordBtn.textContent='🎙️ 말하기 시작';if(!stopRequested)setStatus('음성 인식이 종료됐어요. 다시 눌러 이어서 말할 수 있습니다.');else setStatus('말하기가 종료됐어요. 내용을 확인하고 저장하세요.');stopRequested=false};
+recordBtn.addEventListener('click',()=>{if(recording){stopRequested=true;recognition.stop();return}baseText=textEl.value.trim();finalTranscript='';try{recognition.start()}catch(e){setStatus('마이크를 시작하지 못했습니다. 잠시 후 다시 시도하세요.')}})}
+document.getElementById('saveBtn').addEventListener('click',()=>{const value=textEl.value.trim();if(!value){alert('일기 내용을 먼저 입력해 주세요.');return}if(recording){stopRequested=true;recognition.stop()}const list=load();list.push({id:globalThis.crypto?.randomUUID?.()||String(Date.now()+Math.random()),date:dateEl.value||localDate(),text:value,createdAt:new Date().toISOString()});try{localStorage.setItem(KEY,JSON.stringify(list));textEl.value='';setStatus('일기가 저장되었습니다.');render()}catch{setStatus('저장 공간이 부족하거나 브라우저 저장이 차단되었습니다.')}});
+document.getElementById('clearBtn').addEventListener('click',()=>{if(recording){stopRequested=true;recognition.stop()}textEl.value='';setStatus('내용을 비웠어요.')});render();
+})();
+</script></body></html>
