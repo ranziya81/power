@@ -12,32 +12,12 @@
   <div class="shell">
     <header class="topbar">
       <a href="#" class="brand" aria-label="하루의 문장 홈"><span class="brandmark">✳</span> 하루의 문장 <small>VOICE DIARY</small></a>
-      <div class="userbar"><span id="userEmail" class="useremail"></span><button id="signOutBtn" class="text-button" hidden>로그아웃</button></div>
+      <div class="userbar"><span class="useremail">로그인 없는 테스트 버전</span></div>
     </header>
 
     <main>
-      <section id="authView" class="auth-layout">
-        <div class="intro">
-          <span class="eyebrow">A LITTLE MOMENT, EVERY DAY</span>
-          <h1>오늘의 마음을<br><em>목소리로 남겨요.</em></h1>
-          <p>말로 꺼낸 하루가 한 편의 기록이 됩니다.<br>언제든 다시 읽어볼 수 있도록 안전하게 보관해요.</p>
-          <div class="illustration" aria-hidden="true"><div class="sun"></div><div class="line one"></div><div class="line two"></div><div class="line three"></div><span>오늘의 이야기를 들려주세요.</span></div>
-        </div>
-        <form id="authForm" class="surface auth-card">
-          <div class="eyebrow">MY PRIVATE JOURNAL</div>
-          <h2 id="authTitle">다시 만나 반가워요</h2>
-          <p class="muted" id="authDescription">로그인하면 나만의 일기를 볼 수 있어요.</p>
-          <label for="email">이메일</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required />
-          <label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" placeholder="6자 이상 입력" minlength="6" required />
-          <button type="submit" id="authSubmitBtn" class="primary wide">로그인</button>
-          <p id="authMessage" class="notice" role="status"></p>
-          <button type="button" id="authToggleBtn" class="text-button wide">계정이 없나요? 회원가입</button>
-          <div class="demo-access"><button type="button" id="demoLoginBtn" class="secondary wide">회원가입 없이 체험하기 →</button><p class="muted" style="font-size:12px;line-height:1.6;margin:8px 0 0">체험 모드의 일기는 이 브라우저에만 보관되며 Supabase에는 저장되지 않습니다. 실제 개인 일기는 회원가입 후 이용하세요.</p></div>
-        </form>
-      </section>
-
-      <section id="diaryView" hidden>
-        <div id="demoBanner" hidden role="status" style="padding:12px 16px;margin:18px 0;background:#fff3d8;border:1px solid #e9d2a3;border-radius:12px;color:#775b25;font-size:14px">🧪 체험 모드입니다. 기록은 현재 브라우저에만 저장되며 Supabase DB에는 저장되지 않습니다.</div>
+      <section id="diaryView">
+        <div role="status" style="padding:12px 16px;margin:18px 0;background:#fff3d8;border:1px solid #e9d2a3;border-radius:12px;color:#775b25;font-size:14px">📝 로그인 없는 테스트 버전 · 기록은 이 브라우저에만 저장되며 Supabase DB에는 저장되지 않습니다.</div>
         <div class="page-heading"><div><span class="eyebrow">MY DAILY RECORD</span><h1>오늘을 기록하는 시간<span class="dot">.</span></h1><p class="muted">완벽한 문장이 아니어도 괜찮아요. 있는 그대로 남겨보세요.</p></div><div class="today-stamp" id="todayLabel"></div></div>
         <div class="diary-grid">
           <div class="editor-column">
