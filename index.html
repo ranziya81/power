@@ -32,10 +32,12 @@
           <button type="submit" id="authSubmitBtn" class="primary wide">로그인</button>
           <p id="authMessage" class="notice" role="status"></p>
           <button type="button" id="authToggleBtn" class="text-button wide">계정이 없나요? 회원가입</button>
+          <div class="demo-access"><button type="button" id="demoLoginBtn" class="secondary wide">회원가입 없이 체험하기 →</button><p class="muted" style="font-size:12px;line-height:1.6;margin:8px 0 0">체험 모드의 일기는 이 브라우저에만 보관되며 Supabase에는 저장되지 않습니다. 실제 개인 일기는 회원가입 후 이용하세요.</p></div>
         </form>
       </section>
 
       <section id="diaryView" hidden>
+        <div id="demoBanner" hidden role="status" style="padding:12px 16px;margin:18px 0;background:#fff3d8;border:1px solid #e9d2a3;border-radius:12px;color:#775b25;font-size:14px">🧪 체험 모드입니다. 기록은 현재 브라우저에만 저장되며 Supabase DB에는 저장되지 않습니다.</div>
         <div class="page-heading"><div><span class="eyebrow">MY DAILY RECORD</span><h1>오늘을 기록하는 시간<span class="dot">.</span></h1><p class="muted">완벽한 문장이 아니어도 괜찮아요. 있는 그대로 남겨보세요.</p></div><div class="today-stamp" id="todayLabel"></div></div>
         <div class="diary-grid">
           <div class="editor-column">
